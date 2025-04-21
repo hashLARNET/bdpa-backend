@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDPA - Base de Datos de Progreso Automatizado</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+            --secondary-color: #2ecc71;
+            --secondary-dark: #27ae60;
+            --danger-color: #e74c3c;
+            --danger-dark: #c0392b;
+            --warning-color: #f39c12;
+            --warning-dark: #e67e22;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --gray-color: #95a5a6;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 60px;
+            margin-right: 15px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .logo-subtext {
+            font-size: 14px;
+            color: var(--gray-color);
+            margin-top: 5px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .user-role {
+            font-size: 14px;
+            color: var(--gray-color);
+            margin-top: 5px;
+        }
+
+        .logout-btn {
+            color: var(--danger-color);
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        h2 {
+            color: var(--dark-color);
+            margin-bottom: 25px;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        /* Estilos para las secciones principales */
+        #login-container {
+            max-width: 400px;
+        }
+
+        #main-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .menu-card i {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .menu-card h3 {
+            margin: 0;
+            color: var(--dark-color);
+        }
+
+        .menu-card p {
+            color: var(--gray-color);
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* Estilos para formularios */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Estilos para botones */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: var(--warning-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: var(--secondary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Estilos para la tabla de consultas */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .badge-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .badge-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .badge-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Estilos para los avances */
+        .avances-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .avance-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid #eee;
+        }
+
+        .avance-item label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        .avance-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Clases utilitarias */
+        .hidden {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-20 {
+            margin-top: 20px;
+        }
+
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Estilos para filtros */
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+
+        /* Estilos para la paginación */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            margin: 0 5px;
+            min-width: 40px;
+        }
+
+        /* Estilos para pestañas */
+        .nav-tabs {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav-item {
+            margin-right: 10px;
+        }
+
+        .nav-link {
+            padding: 10px 15px;
+            border: 1px solid transparent;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            color: var(--dark-color);
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            border-color: #ddd;
+            background-color: #f8f9fa;
+        }
+
+        .nav-link.active {
+            border-color: #ddd #ddd #fff;
+            background-color: white;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .tab-content {
+            padding: 20px 0;
+        }
+
+        /* Estilos para texto de peligro (stock bajo) */
+        .text-danger {
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+
+        /* Estilos para botones pequeños */
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        /* Estilos específicos para inventario */
+        .stock-zero {
+            background-color: #ffdddd;
+        }
+        
+        .stock-low {
+            background-color: #fff3cd;
+        }
+        
+        .stock-ok {
+            background-color: #d4edda;
+        }
+
+        /* Notificaciones */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            color: white;
+            box-shadow: var(--box-shadow);
+            z-index: 1000;
+            animation: slideIn 0.3s ease, fadeOut 0.5s ease 3s forwards;
+        }
+
+        .notification.success {
+            background-color: var(--secondary-color);
+        }
+
+        .notification.error {
+            background-color: var(--danger-color);
+        }
+
+        .notification.warning {
+            background-color: var(--warning-color);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* Loader */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <!-- Contenedor de Login -->
+    <div id="login-container" class="container">
+        <div class="logo-container">
+            <img src="https://via.placeholder.com/60x60?text=BDPA" alt="Logo BDPA" class="logo">
+            <div>
+                <div class="logo-text">BDPA</div>
+                <div class="logo-subtext">Base de Datos de Progreso Automatizado</div>
+            </div>
+        </div>
+        <h2 class="text-center">Iniciar Sesión</h2>
+        <div class="form-group">
+            <label for="username"><i class="fas fa-user"></i> Usuario:</label>
+            <input type="text" id="username" placeholder="Ingrese su usuario">
+        </div>
+        <div class="form-group">
+            <label for="password"><i class="fas fa-lock"></i> Contraseña:</label>
+            <input type="password" id="password" placeholder="Ingrese su contraseña">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="iniciarSesion()">
+            <i class="fas fa-sign-in-alt"></i> Ingresar
+        </button>
+        <div id="login-loader" class="loader hidden"></div>
+    </div>
+    <!-- Menú Principal -->
+    <div id="main-menu-container" class="container hidden fade-in">
+        <div class="header">
+            <div class="logo-container">
+                <img src="https://via.placeholder.com/60x60?text=BDPA" alt="Logo BDPA" class="logo">
+                <div>
+                    <div class="logo-text">BDPA</div>
+                    <div class="logo-subtext">Base de Datos de Progreso Automatizado</div>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-name" id="current-user"></div>
+                <div class="user-role" id="current-role"></div>
+                <a class="logout-btn" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+            </div>
+        </div>
+
+        <div id="main-menu">
+            <div class="menu-card" onclick="mostrarSeccion('registrar-avance')">
+                <i class="fas fa-tasks"></i>
+                <h3>Registrar Avance</h3>
+                <p>Registra nuevos avances en las obras</p>
+            </div>
+            
+            <div class="menu-card" onclick="mostrarSeccion('consultar-avances')" id="consultar-btn">
+                <i class="fas fa-search"></i>
+                <h3>Consultar Avances</h3>
+                <p>Consulta el progreso de las obras</p>
+            </div>
+            
+            <div class="menu-card" onclick="mostrarSeccion('gestion-obras')" id="gestion-obras-btn">
+                <i class="fas fa-building"></i>
+                <h3>Gestión de Obras</h3>
+                <p>Administra las obras disponibles</p>
+            </div>
+            
+            <div class="menu-card" onclick="mostrarSeccion('gestion-inventario')" id="gestion-inventario-btn">
+                <i class="fas fa-boxes"></i>
+                <h3>Gestión de Inventario</h3>
+                <p>Administra materiales y stock</p>
+            </div>
+            
+            <div class="menu-card" onclick="mostrarSeccion('gestion-usuarios')" id="gestion-usuarios-btn">
+                <i class="fas fa-users"></i>
+                <h3>Gestión de Usuarios</h3>
+                <p>Administra los usuarios del sistema</p>
+            </div>
+            
+            <div class="menu-card" onclick="mostrarSeccion('reportes')" id="reportes-btn">
+                <i class="fas fa-chart-bar"></i>
+                <h3>Reportes</h3>
+                <p>Genera reportes de progreso</p>
+            </div>
+            
+            <div class="menu-card" onclick="mostrarSeccion('configuracion')" id="configuracion-btn">
+                <i class="fas fa-cog"></i>
+                <h3>Configuración</h3>
+                <p>Configura el sistema</p>
+            </div>
+            
+            <div class="menu-card" onclick="mostrarSeccion('gestion-avances')" id="gestion-avances-btn">
+                <i class="fas fa-list-check"></i>
+                <h3>Tipos de Avance</h3>
+                <p>Administra los tipos de avance disponibles</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Registrar Avance -->
+    <div id="registrar-avance" class="container hidden fade-in">
+        <div class="header">
+            <div>
+                <h2><i class="fas fa-tasks"></i> Registrar Avance</h2>
+            </div>
+            <button class="btn btn-danger" onclick="volverAlMenu()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+        </div>
+        
+        <div class="form-group">
+            <label for="obra-avance">Obra:</label>
+            <select id="obra-avance" onchange="cargarAvancesObra()">
+                <option value="">Seleccione una obra</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="piso">Piso:</label>
+            <input type="number" id="piso" placeholder="Ejemplo: 4">
+        </div>
+        
+        <div class="form-group">
+            <label for="departamento">Departamento:</label>
+            <input type="text" id="departamento" placeholder="Ejemplo: 407">
+        </div>
+        
+        <div id="avances-container">
+            <h3>Avances realizados:</h3>
+            <div id="avances-especificos" class="avances-container">
+                <!-- Los avances específicos se cargarán dinámicamente según la obra -->
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="observaciones">Observaciones:</label>
+            <textarea id="observaciones" placeholder="Ingrese cualquier observación adicional"></textarea>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="registrarAvance()">
+                <i class="fas fa-save"></i> Guardar Avance
+            </button>
+            <button class="btn btn-danger" onclick="volverAlMenu()">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+        </div>
+        <div id="avance-loader" class="loader hidden"></div>
+    </div>
+
+    <!-- Sección de Consultar Avances -->
+    <div id="consultar-avances" class="container hidden fade-in">
+        <div class="header">
+            <div>
+                <h2><i class="fas fa-search"></i> Consultar Avances</h2>
+            </div>
+            <button class="btn btn-danger" onclick="volverAlMenu()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+        </div>
+        
+        <div class="filters">
+            <div class="form-group">
+                <label for="filtro-obra">Obra:</label>
+                <select id="filtro-obra">
+                    <option value="">Todas las obras</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="filtro-piso">Piso:</label>
+                <input type="number" id="filtro-piso" placeholder="Filtrar por piso">
+            </div>
+            
+            <div class="form-group">
+                <label for="filtro-depto">Departamento:</label>
+                <input type="text" id="filtro-depto" placeholder="Filtrar por departamento">
+            </div>
+            
+            <div class="form-group">
+                <label for="filtro-fecha">Fecha:</label>
+                <input type="date" id="filtro-fecha">
+            </div>
+        </div>
+        
+        <button class="btn btn-primary" onclick="filtrarAvances()">
+            <i class="fas fa-filter"></i> Aplicar Filtros
+        </button>
+        
+        <div class="table-container">
+            <table id="tabla-avances">
+                <thead>
+                    <tr>
+                        <th>Obra</th>
+                        <th>Piso</th>
+                        <th>Depto</th>
+                        <th>Avances</th>
+                        <th>Fecha</th>
+                        <th>Registrado por</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Los avances se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="pagination">
+            <button class="btn" onclick="cambiarPagina(-1)"><i class="fas fa-chevron-left"></i></button>
+            <span id="pagina-actual">1</span>
+            <button class="btn" onclick="cambiarPagina(1)"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div id="consulta-loader" class="loader hidden"></div>
+    </div>
+    <!-- Sección de Gestión de Obras -->
+    <div id="gestion-obras" class="container hidden fade-in">
+        <div class="header">
+            <div>
+                <h2><i class="fas fa-building"></i> Gestión de Obras</h2>
+            </div>
+            <button class="btn btn-danger" onclick="volverAlMenu()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+        </div>
+        
+        <button class="btn btn-primary mb-20" onclick="mostrarFormularioObra()">
+            <i class="fas fa-plus"></i> Nueva Obra
+        </button>
+        
+        <div id="formulario-obra" class="hidden">
+            <div class="form-group">
+                <label for="nombre-obra">Nombre de la obra:</label>
+                <input type="text" id="nombre-obra" placeholder="Ingrese el nombre de la obra">
+            </div>
+            
+            <div class="form-group">
+                <label for="direccion-obra">Dirección:</label>
+                <input type="text" id="direccion-obra" placeholder="Ingrese la dirección de la obra">
+            </div>
+            
+            <div class="form-group">
+                <label for="fecha-inicio">Fecha de inicio:</label>
+                <input type="date" id="fecha-inicio">
+            </div>
+            
+            <div class="form-group">
+                <label for="fecha-termino">Fecha estimada de término:</label>
+                <input type="date" id="fecha-termino">
+            </div>
+            
+            <div class="form-group">
+                <label for="tipo-obra">Tipo de obra:</label>
+                <select id="tipo-obra">
+                    <option value="residencial">Residencial</option>
+                    <option value="comercial">Comercial</option>
+                    <option value="industrial">Industrial</option>
+                    <option value="infraestructura">Infraestructura</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="avances-obra">Avances asociados:</label>
+                <select id="avances-obra" multiple style="height: 150px;">
+                    <!-- Se llenará dinámicamente con los tipos de avance disponibles -->
+                </select>
+                <small class="text-muted">Mantén presionada la tecla Ctrl para seleccionar múltiples avances</small>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="guardarObra()">
+                    <i class="fas fa-save"></i> Guardar Obra
+                </button>
+                <button class="btn btn-danger" onclick="cancelarEdicionObra()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table id="tabla-obras">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Dirección</th>
+                        <th>Tipo</th>
+                        <th>Avances</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las obras se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+        <div id="obras-loader" class="loader hidden"></div>
+    </div>
+
+    <!-- Sección de Gestión de Tipos de Avance -->
+    <div id="gestion-avances" class="container hidden fade-in">
+        <div class="header">
+            <div>
+                <h2><i class="fas fa-list-check"></i> Gestión de Tipos de Avance</h2>
+            </div>
+            <button class="btn btn-danger" onclick="volverAlMenu()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+        </div>
+        
+        <button class="btn btn-primary mb-20" onclick="mostrarFormularioTipoAvance()">
+            <i class="fas fa-plus"></i> Nuevo Tipo de Avance
+        </button>
+        
+        <div id="formulario-tipo-avance" class="hidden">
+            <div class="form-group">
+                <label for="nombre-tipo-avance">Nombre del tipo de avance:</label>
+                <input type="text" id="nombre-tipo-avance" placeholder="Ej: Instalación eléctrica">
+            </div>
+            
+            <div class="form-group">
+                <label for="descripcion-tipo-avance">Descripción:</label>
+                <textarea id="descripcion-tipo-avance" placeholder="Descripción detallada del tipo de avance"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="categoria-tipo-avance">Categoría:</label>
+                <select id="categoria-tipo-avance">
+                    <option value="electricidad">Electricidad</option>
+                    <option value="fontaneria">Fontanería</option>
+                    <option value="construccion">Construcción</option>
+                    <option value="acabados">Acabados</option>
+                    <option value="otros">Otros</option>
+                </select>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="guardarTipoAvance()">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+                <button class="btn btn-danger" onclick="cancelarEdicionTipoAvance()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table id="tabla-tipos-avance">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Los tipos de avance se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+        <div id="tipos-avance-loader" class="loader hidden"></div>
+    </div>
+    <!-- Sección de Gestión de Inventario -->
+    <div id="gestion-inventario" class="container hidden fade-in">
+        <div class="header">
+            <div>
+                <h2><i class="fas fa-boxes"></i> Gestión de Inventario</h2>
+            </div>
+            <button class="btn btn-danger" onclick="volverAlMenu()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+        </div>
+        
+        <ul class="nav nav-tabs mb-20">
+            <li class="nav-item">
+                <a class="nav-link active" onclick="mostrarTabInventario('consultar')">Consultar</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="mostrarTabInventario('entradas')">Entradas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="mostrarTabInventario('salidas')">Salidas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="mostrarTabInventario('bodega-santiago')">Bodega Santiago</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="mostrarTabInventario('movimientos')">Movimientos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="mostrarTabInventario('categorias')">Categorías</a>
+            </li>
+        </ul>
+        
+        <!-- Pestaña de Consulta -->
+        <div id="inventario-consultar" class="tab-content">
+            <div class="filters">
+                <div class="form-group">
+                    <label for="filtro-categoria">Categoría:</label>
+                    <select id="filtro-categoria">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="filtro-obra-inv">Obra:</label>
+                    <select id="filtro-obra-inv">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="filtro-stock">
+                        <input type="checkbox" id="filtro-stock"> Mostrar solo bajo stock
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="buscar-material">Buscar:</label>
+                    <input type="text" id="buscar-material" placeholder="Nombre, código o descripción">
+                </div>
+            </div>
+            
+            <button class="btn btn-primary mb-20" onclick="filtrarInventario()">
+                <i class="fas fa-filter"></i> Aplicar Filtros
+            </button>
+            
+            <button class="btn btn-secondary mb-20" onclick="mostrarFormularioMaterial()">
+                <i class="fas fa-plus"></i> Nuevo Material
+            </button>
+            
+            <div id="formulario-material" class="hidden mb-20">
+                <div class="form-group">
+                    <label for="codigo-material">Código:</label>
+                    <input type="text" id="codigo-material" placeholder="Código único del material">
+                </div>
+                
+                <div class="form-group">
+                    <label for="nombre-material">Nombre:</label>
+                    <input type="text" id="nombre-material" placeholder="Nombre descriptivo">
+                </div>
+                
+                <div class="form-group">
+                    <label for="descripcion-material">Descripción:</label>
+                    <textarea id="descripcion-material" placeholder="Descripción detallada"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="categoria-material">Categoría:</label>
+                    <select id="categoria-material">
+                        <option value="">Seleccione una categoría</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="unidad-material">Unidad de medida:</label>
+                    <select id="unidad-material">
+                        <option value="unidad">Unidad</option>
+                        <option value="metro">Metro</option>
+                        <option value="litro">Litro</option>
+                        <option value="kilogramo">Kilogramo</option>
+                        <option value="caja">Caja</option>
+                        <option value="paquete">Paquete</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="stock-minimo-material">Stock mínimo:</label>
+                    <input type="number" id="stock-minimo-material" min="0" value="5">
+                </div>
+                
+                <div class="form-group">
+                    <label for="ubicacion-material">Ubicación:</label>
+                    <input type="text" id="ubicacion-material" placeholder="Ubicación en bodega">
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="guardarMaterial()">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                    <button class="btn btn-danger" onclick="cancelarEdicionMaterial()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table id="tabla-inventario">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Categoría</th>
+                            <th>Stock</th>
+                            <th>Mínimo</th>
+                            <th>Unidad</th>
+                            <th>Ubicación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los items se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Pestaña de Entradas -->
+        <div id="inventario-entradas" class="tab-content hidden">
+            <div class="form-group">
+                <label for="material-entrada">Material:</label>
+                <select id="material-entrada" onchange="actualizarDetallesMaterial()">
+                    <option value="">Seleccione un material</option>
+                </select>
+                <div id="detalles-material" class="mt-10" style="font-size: 14px; color: var(--dark-color); display: none;">
+                    <p><strong>Stock actual:</strong> <span id="stock-actual">0</span> <span id="unidad-actual"></span></p>
+                    <p><strong>Stock mínimo:</strong> <span id="minimo-actual">0</span></p>
+                    <p><strong>Ubicación:</strong> <span id="ubicacion-actual">N/A</span></p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="cantidad-entrada">Cantidad:</label>
+                <input type="number" id="cantidad-entrada" min="1" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="proveedor-entrada">Proveedor:</label>
+                <select id="proveedor-entrada">
+                    <option value="">Seleccione proveedor</option>
+                    <option value="proveedor1">Proveedor 1</option>
+                    <option value="proveedor2">Proveedor 2</option>
+                    <option value="proveedor3">Proveedor 3</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="costo-entrada">Costo unitario ($):</label>
+                <input type="number" id="costo-entrada" min="0" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="fecha-entrada">Fecha:</label>
+                <input type="date" id="fecha-entrada">
+            </div>
+            
+            <div class="form-group">
+                <label for="comentario-entrada">Comentario:</label>
+                <textarea id="comentario-entrada" placeholder="Factura, observaciones, etc."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="documento-entrada">Documento (Factura/Remisión):</label>
+                <input type="file" id="documento-entrada" accept=".pdf,.jpg,.png">
+            </div>
+            
+            <button class="btn btn-success" onclick="registrarEntrada()">
+                <i class="fas fa-plus-circle"></i> Registrar Entrada
+            </button>
+            <div id="entrada-loader" class="loader hidden"></div>
+        </div>
+        
+        <!-- Pestaña de Salidas -->
+        <div id="inventario-salidas" class="tab-content hidden">
+            <div class="form-group">
+                <label for="material-salida">Material:</label>
+                <select id="material-salida" onchange="actualizarStockDisponible()">
+                    <option value="">Seleccione un material</option>
+                </select>
+                <div id="stock-disponible" class="mt-10" style="font-size: 14px; color: var(--dark-color);">
+                    Stock disponible: <span id="stock-disponible-valor">0</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="cantidad-salida">Cantidad:</label>
+                <input type="number" id="cantidad-salida" min="0.01" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="obra-salida">Obra destino:</label>
+                <select id="obra-salida">
+                    <option value="">Seleccione una obra</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="responsable-salida">Responsable:</label>
+                <input type="text" id="responsable-salida" value="" disabled>
+            </div>
+            
+            <div class="form-group">
+                <label for="fecha-salida">Fecha:</label>
+                <input type="date" id="fecha-salida">
+            </div>
+            
+            <div class="form-group">
+                <label for="comentario-salida">Comentario:</label>
+                <textarea id="comentario-salida" placeholder="Motivo de salida, observaciones"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="prioridad-salida">Prioridad:</label>
+                <select id="prioridad-salida">
+                    <option value="normal">Normal</option>
+                    <option value="urgente">Urgente</option>
+                    <option value="critico">Crítico</option>
+                </select>
+            </div>
+            
+            <button class="btn btn-primary" onclick="registrarSalida()">
+                <i class="fas fa-minus-circle"></i> Registrar Salida
+            </button>
+            <div id="salida-loader" class="loader hidden"></div>
+        </div>
+        
+        <!-- Pestaña de Bodega Santiago -->
+        <div id="inventario-bodega-santiago" class="tab-content hidden">
+            <div class="filters">
+                <div class="form-group">
+                    <label for="filtro-marca-bodega">Marca:</label>
+                    <select id="filtro-marca-bodega">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="filtro-categoria-bodega">Categoría:</label>
+                    <select id="filtro-categoria-bodega">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="filtro-stock-bodega">
+                        <input type="checkbox" id="filtro-stock-bodega"> Mostrar solo bajo stock
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="buscar-material-bodega">Buscar:</label>
+                    <input type="text" id="buscar-material-bodega" placeholder="Nombre, código o descripción">
+                </div>
+            </div>
+            
+            <button class="btn btn-primary mb-20" onclick="filtrarInventarioBodega()">
+                <i class="fas fa-filter"></i> Aplicar Filtros
+            </button>
+            
+            <div class="table-container">
+                <table id="tabla-inventario-bodega">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Marca</th>
+                            <th>Artículo</th>
+                            <th>Categoría</th>
+                            <th>Stock Actual</th>
+                            <th>Stock Mínimo</th>
+                            <th>Unidad</th>
+                            <th>Ubicación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los items de la bodega se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Pestaña de Movimientos -->
+        <div id="inventario-movimientos" class="tab-content hidden">
+            <div class="filters">
+                <div class="form-group">
+                    <label for="filtro-tipo-movimiento">Tipo:</label>
+                    <select id="filtro-tipo-movimiento">
+                        <option value="">Todos</option>
+                        <option value="entrada">Entrada</option>
+                        <option value="salida">Salida</option>
+                        <option value="ajuste">Ajuste</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="filtro-material-movimiento">Material:</label>
+                    <select id="filtro-material-movimiento">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="filtro-fecha-desde">Desde:</label>
+                    <input type="date" id="filtro-fecha-desde">
+                </div>
+                
+                <div class="form-group">
+                    <label for="filtro-fecha-hasta">Hasta:</label>
+                    <input type="date" id="filtro-fecha-hasta">
+                </div>
+                
+                <div class="form-group">
+                    <label for="filtro-usuario-movimiento">Usuario:</label>
+                    <select id="filtro-usuario-movimiento">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary mb-20" onclick="filtrarMovimientos()">
+                <i class="fas fa-filter"></i> Aplicar Filtros
+            </button>
+            
+            <button class="btn btn-secondary mb-20" onclick="exportarMovimientos()">
+                <i class="fas fa-file-export"></i> Exportar a Excel
+            </button>
+            
+            <div class="table-container">
+                <table id="tabla-movimientos">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Material</th>
+                            <th>Cantidad</th>
+                            <th>Origen/Destino</th>
+                            <th>Usuario</th>
+                            <th>Comentario</th>
+                            <th>Documento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los movimientos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Pestaña de Categorías -->
+        <div id="inventario-categorias" class="tab-content hidden">
+            <button class="btn btn-primary mb-20" onclick="mostrarFormularioCategoria()">
+                <i class="fas fa-plus"></i> Nueva Categoría
+            </button>
+            
+            <div id="formulario-categoria" class="hidden mb-20">
+                <div class="form-group">
+                    <label for="nombre-categoria">Nombre:</label>
+                    <input type="text" id="nombre-categoria" placeholder="Nombre de la categoría">
+                </div>
+                
+                <div class="form-group">
+                    <label for="descripcion-categoria">Descripción:</label>
+                    <textarea id="descripcion-categoria" placeholder="Descripción de la categoría"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="color-categoria">Color identificador:</label>
+                    <input type="color" id="color-categoria" value="#3498db">
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="guardarCategoria()">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                    <button class="btn btn-danger" onclick="cancelarEdicionCategoria()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table id="tabla-categorias">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Color</th>
+                            <th>Materiales</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Las categorías se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Gestión de Usuarios -->
+    <div id="gestion-usuarios" class="container hidden fade-in">
+        <!-- ... (contenido existente de gestión de usuarios) ... -->
+    </div>
+
+    <!-- Sección de Reportes -->
+    <div id="reportes" class="container hidden fade-in">
+        <!-- ... (contenido existente de reportes) ... -->
+    </div>
+
+    <!-- Sección de Configuración -->
+    <div id="configuracion" class="container hidden fade-in">
+        <!-- ... (contenido existente de configuración) ... -->
+    </div>
+
+    <script>
+        // Variables globales
+        const API_BASE_URL = 'https://api.tudominio.com/bdpa/v1';
+        let usuarioActual = null;
+        let obraSeleccionada = null;
+        let materialEditando = null;
+        let categoriaEditando = null;
+        let tipoAvanceEditando = null;
+        
+        // Funciones para el inventario mejorado
+        async function actualizarDetallesMaterial() {
+            const materialId = document.getElementById("material-entrada").value;
+            if (!materialId) {
+                document.getElementById("detalles-material").style.display = 'none';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/inventario/${materialId}`);
+                const material = await response.json();
+                
+                document.getElementById("stock-actual").textContent = material.stock;
+                document.getElementById("unidad-actual").textContent = material.unidad;
+                document.getElementById("minimo-actual").textContent = material.stockMinimo;
+                document.getElementById("ubicacion-actual").textContent = material.ubicacion;
+                document.getElementById("detalles-material").style.display = 'block';
+            } catch (error) {
+                console.error("Error al obtener detalles del material:", error);
+            }
+        }
+        
+        async function registrarEntrada() {
+            // Validación y lógica para registrar entrada
+        }
+        
+        async function registrarSalida() {
+            // Validación y lógica para registrar salida
+        }
+        
+        async function filtrarMovimientos() {
+            // Lógica para filtrar movimientos
+        }
+        
+        async function exportarMovimientos() {
+            // Lógica para exportar a Excel
+        }
+        
+        // Funciones para categorías
+        async function cargarCategorias() {
+            // Lógica para cargar categorías
+        }
+        
+        async function guardarCategoria() {
+            // Lógica para guardar categoría
+        }
+        
+        // Más funciones del sistema...
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos iniciales
+            cargarObras();
+            cargarCategorias();
+            cargarTiposAvance();
+            
+            // Configurar fecha actual en formularios
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById("fecha-entrada").value = hoy;
+            document.getElementById("fecha-salida").value = hoy;
+        });
+    </script>
+</body>
+</html>
